@@ -1,0 +1,21 @@
+{
+  "families": {
+    "-N0Oc1N-R-PTiZ9J7IYw": {
+      "head": "Xy7XXDdKXZUpJuvfQjJWaaJ3pMj2",
+      "members": {
+        "hellow": "Xy7XXDdKXZUpJuvfQjJWaaJ3pMj2",
+        "we": "gGh8mie6tDQ7xqFFUnVBXbB0VD52"
+      }
+    }
+  },
+  "users": {
+    "Xy7XXDdKXZUpJuvfQjJWaaJ3pMj2": {
+      "familyID": "-N0Oc1N-R-PTiZ9J7IYw",
+      "username": "hellow"
+    },
+    "gGh8mie6tDQ7xqFFUnVBXbB0VD52": {
+      "familyID": "-N0Oc1N-R-PTiZ9J7IYw",
+      "username": "we"
+    }
+  }
+}
