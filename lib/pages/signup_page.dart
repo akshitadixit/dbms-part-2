@@ -172,6 +172,9 @@ class _SignupPageState extends State<SignupPage> {
                                             email, password);
                                     await FirebaseAuth.instance.currentUser
                                         ?.updateDisplayName(this.username);
+                                    await FirebaseAuth.instance.currentUser
+                                        ?.updatePhotoURL(
+                                            'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png');
 
                                     if (code == "") {
                                       db.addUser();

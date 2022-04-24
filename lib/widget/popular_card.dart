@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:travel_app/theme.dart';
 
 class PopularCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String location;
+  final String img;
+  final String username;
 
   const PopularCard({
     Key? key,
-    required this.imageUrl,
-    required this.title,
-    required this.location,
+    required this.img,
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -25,7 +23,9 @@ class PopularCard extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundImage: AssetImage(imageUrl,),
+            backgroundImage: NetworkImage(
+              img,
+            ),
           ),
           SizedBox(
             width: 13,
@@ -34,7 +34,7 @@ class PopularCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                username,
                 style: blackTextStyle.copyWith(
                   fontSize: 18,
                 ),
@@ -49,34 +49,17 @@ class PopularCard extends StatelessWidget {
                     width: 10,
                   ),
                   SizedBox(width: 5),
-                  Text(
-                    location,
-                    style: greyTextStyle.copyWith(
-                      fontSize: 14,
-                    ),
-                  ),
+                  // Text(
+                  //   location,
+                  //   style: greyTextStyle.copyWith(
+                  //     fontSize: 14,
+                  //   ),
+                  // ),
                 ],
               ),
-              SizedBox(
-                height: 12,
-              ),
-              Row(
-                children: [
-                  Image.asset(
-                    "assets/list_person.png",
-                    width: 60,
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Text(
-                    "52 Reviews",
-                    style: blackTextStyle.copyWith(
-                      fontSize: 10,
-                    ),
-                  ),
-                ],
-              )
+              // SizedBox(
+              //   height: 12,
+              // ),
             ],
           )
         ],

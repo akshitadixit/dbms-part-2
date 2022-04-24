@@ -29,6 +29,10 @@ class db {
         user.displayName: user.uid,
       },
     });
+
+    DatabaseReference membersRef =
+        database.child('members').child(familyref.key!);
+    membersRef.child(user.displayName!).set(user.photoURL!);
   }
 
   // let mum share her familyID with members

@@ -55,21 +55,18 @@ class BookmarksPage extends StatelessWidget {
             child: Column(
               children: [
                 PopularCard(
-                  imageUrl: "assets/jagannath1.jpg",
-                  title: "Jagannath",
-                  location: "Orissa",
+                  img: "assets/jagannath1.jpg",
+                  username: "Jagannath",
                 ),
                 SizedBox(height: 33),
                 PopularCard(
-                  imageUrl: "assets/bodhgaya1.jpg",
-                  title: "Bodhgaya",
-                  location: "Bihar",
+                  img: "assets/bodhgaya1.jpg",
+                  username: "Bodhgaya",
                 ),
                 SizedBox(height: 33),
                 PopularCard(
-                  imageUrl: "assets/ajmer_sharif1.jpg",
-                  title: "Ajmer Sharif",
-                  location: "Rajasthan",
+                  img: "assets/ajmer_sharif1.jpg",
+                  username: "Ajmer Sharif",
                 ),
               ],
             ),

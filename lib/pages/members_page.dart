@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/theme.dart';
 import 'package:travel_app/widget/navigation.dart';
+import 'package:travel_app/widget/popular_card.dart';
 
 class MarketPage extends StatelessWidget {
   const MarketPage({Key? key}) : super(key: key);
@@ -27,46 +28,48 @@ class MarketPage extends StatelessWidget {
       return familyID;
     }
 
-    getFamilyRef(familyID, {flag = false}) {
-      Map<String, dynamic> members = {};
-      DatabaseReference familyRef;
-      if (flag) {
-        familyRef = FirebaseDatabase.instance.ref('families/$familyID/members');
-      } else {
-        familyRef = FirebaseDatabase.instance.ref('families/$familyID');
-      }
-      print(familyRef.get().then((value) {
-        print('familyRef: ${value.value}');
-        if (flag) {
-          members = json.decode(value.value as String);
-        }
+    getMembersRef(familyID) {
+      DatabaseReference membersRef =
+          FirebaseDatabase.instance.ref('members/$familyID');
+
+      print(membersRef.get().then((value) {
+        print('membersRef: ${value.value}');
+        print('type:${value.value.runtimeType}');
       }));
 
-      print(members);
-
-      return familyRef;
+      return membersRef.ref;
     }
 
     Widget content() {
       String familyID = getFamilyID();
-      DatabaseReference familyRef = getFamilyRef(familyID, flag: false);
-      familyRef = getFamilyRef(familyID, flag: true);
+      //List membersList = getFamilyMembers(familyID);
+      DatabaseReference membersRef = getMembersRef(familyID);
 
       return StreamBuilder<Object>(
-          stream: familyRef.onValue,
+          stream: membersRef.onValue,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (snapshot.hasData) {
               DataSnapshot snap = (snapshot.data! as DatabaseEvent).snapshot;
-              //print(snap.value);
-              Map<dynamic, dynamic> members =
+              Map<dynamic, dynamic> values =
                   snap.value as Map<dynamic, dynamic>;
+              print('values: $values');
+              print('snap:${values.values.first.values.toList()}');
+              List memberNames = values.values.first.keys.toList();
+              List memberImages = values.values.first.values.toList();
+
               return ListView.builder(
-                itemCount: members.length,
+                itemCount: memberNames.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(members.keys.elementAt(index)),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      PopularCard(
+                          img: memberImages.elementAt(index),
+                          username: memberNames.elementAt(index)),
+                      SizedBox(height: 20),
+                    ],
                   );
                 },
               );
@@ -75,16 +78,12 @@ class MarketPage extends StatelessWidget {
           });
     }
 
-    Widget body() {
-      return Container();
-    }
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: kBackgroundColor,
         body: Stack(
           children: [
-            content() as Widget,
+            content(),
             CustomNavigation(
               home: kdisableOrange,
               market: kOrangeColor,
