@@ -1,81 +1,52 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_app/theme.dart';
 import 'package:travel_app/widget/navigation.dart';
 import 'package:travel_app/widget/popular_card.dart';
 
-class MarketPage extends StatelessWidget {
-  const MarketPage({Key? key}) : super(key: key);
+import '../services/db2.dart';
+
+class MembersPage extends StatefulWidget {
+  @override
+  State<MembersPage> createState() => _MembersPageState();
+}
+
+class _MembersPageState extends State<MembersPage> {
+  User? user = FirebaseAuth.instance.currentUser;
+  late var familyID;
+  late DatabaseReference membersRef;
+  final DatabaseReference database = FirebaseDatabase.instance.ref();
+
+  initState() {
+    this.database.child('users/${user!.uid}/familyID').once().then((snapshot) {
+      this.familyID = snapshot.snapshot.value;
+      this.membersRef = this.database.child('families/$familyID/members');
+      print('familyID: $familyID, membersRef: $membersRef');
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    getFamilyID() {
-      User? user = FirebaseAuth.instance.currentUser;
-      String familyID = '';
-      DatabaseReference familyRef = FirebaseDatabase.instance
-          .ref()
-          .child('users')
-          .child(user!.uid)
-          .child('familyID');
-
-      print(familyRef.get().then((value) {
-        print('familyID: ${value.value}');
-        familyID = value.value as String;
-      }));
-      return familyID;
-    }
-
-    getMembersRef(familyID) {
-      DatabaseReference membersRef =
-          FirebaseDatabase.instance.ref('members/$familyID');
-
-      print(membersRef.get().then((value) {
-        print('membersRef: ${value.value}');
-        print('type:${value.value.runtimeType}');
-      }));
-
-      return membersRef.ref;
-    }
-
     Widget content() {
-      String familyID = getFamilyID();
-      //List membersList = getFamilyMembers(familyID);
-      DatabaseReference membersRef = getMembersRef(familyID);
-
-      return StreamBuilder<Object>(
-          stream: membersRef.onValue,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else if (snapshot.hasData) {
-              DataSnapshot snap = (snapshot.data! as DatabaseEvent).snapshot;
-              Map<dynamic, dynamic> values =
-                  snap.value as Map<dynamic, dynamic>;
-              print('values: $values');
-              print('snap:${values.values.first.values.toList()}');
-              List memberNames = values.values.first.keys.toList();
-              List memberImages = values.values.first.values.toList();
-
-              return ListView.builder(
-                itemCount: memberNames.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      PopularCard(
-                          img: memberImages.elementAt(index),
-                          username: memberNames.elementAt(index)),
-                      SizedBox(height: 20),
-                    ],
-                  );
-                },
-              );
-            } else
-              return Center(child: CircularProgressIndicator());
-          });
+      return ChangeNotifierProvider<DB>(
+        create: (ctx) => DB(uid: FirebaseAuth.instance.currentUser!.uid),
+        child: Consumer<DB>(builder: (context, data, _) {
+          return data.dataMembers.isEmpty
+              ? CircularProgressIndicator()
+              : ListView.builder(
+                  itemCount: data.dataMembers.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(data.dataMembers.keys.elementAt(index)),
+                    );
+                  },
+                );
+        }),
+      );
     }
 
     return SafeArea(
@@ -96,3 +67,19 @@ class MarketPage extends StatelessWidget {
     );
   }
 }
+
+  // getFamilyMembers() async {
+  //   // get members from firebase
+  //   DatabaseReference membersRef =
+  //       FirebaseDatabase.instance.ref().child('families/$familyID/members');
+
+  //   membersRef.once().then((DatabaseEvent event) {
+  //     setState(() {
+  //       this.memberMap = event.snapshot.value as Map<dynamic, dynamic>;
+  //       if (this.assignedTo == 'mum') {
+  //         this.assignedTo = this.memberMap.keys.first;
+  //       }
+  //     });
+  //   });
+  //   print(this.memberMap);
+  // }

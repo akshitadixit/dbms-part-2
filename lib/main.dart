@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
           '/bookmarks': (context) => BookmarksPage(),
           '/login': (context) => LoginPage(),
           '/signup': (context) => SignupPage(),
-          '/marketplace': (context) => MarketPage(),
+          '/marketplace': (context) => MembersPage(),
         },
       ),
     );

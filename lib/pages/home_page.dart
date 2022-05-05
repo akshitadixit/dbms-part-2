@@ -10,6 +10,7 @@ import 'package:travel_app/pages/calendar_page.dart';
 import 'package:travel_app/pages/createTask_page.dart';
 import 'package:travel_app/theme.dart';
 import 'package:travel_app/widget/active_project_card.dart';
+import 'package:travel_app/widget/myTasks.dart';
 import 'package:travel_app/widget/tab_family.dart';
 import 'package:travel_app/widget/navigation.dart';
 import 'package:travel_app/widget/task_column.dart';
@@ -47,16 +48,6 @@ class _HomePageState extends State<HomePage> {
           letterSpacing: 1.2),
     );
   }
-
-  // Widget body(context) {
-  // Widget body(context) {
-  //   final users = database.child('users');
-  //   print(users);
-  //   return ElevatedButton(
-  //     onPressed: () => {saveUserData(users)},
-  //     child: Text('Boom'),
-  //   );
-  // }
 
   Widget tasks() {
     return Column(
@@ -203,8 +194,8 @@ class _HomePageState extends State<HomePage> {
               margin: EdgeInsets.only(bottom: 28),
               child: Row(
                 children: [
-                  Image.asset(
-                    'assets/image_profil.png',
+                  Image.network(
+                    user!.photoURL!,
                     width: 43.5,
                     height: 43.5,
                   ),
@@ -248,8 +239,8 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               header(),
-              //body(context),
               tasks(),
+              //myTasks(),
               activeTasks(),
             ],
           ),

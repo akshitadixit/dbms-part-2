@@ -1,14 +1,18 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_app/widget/top_container.dart';
 import 'package:travel_app/widget/back_button.dart';
 import 'package:travel_app/widget/my_text_field.dart';
 import 'package:travel_app/services/db.dart';
 
+import '../services/db_tasks.dart';
+
 class CreateNewTaskPage extends StatefulWidget {
-  final familyID = 'family1';
+  final familyID = '-N0iSxfUdSqT87v1zZw2';
   @override
   State<CreateNewTaskPage> createState() =>
       _CreateNewTaskPageState(familyID: this.familyID);
@@ -19,31 +23,49 @@ class _CreateNewTaskPageState extends State<CreateNewTaskPage> {
   String description = '';
   int timestamp = 0;
   int deadline = 0;
-  late var assignedTo;
-  late Map memberMap; // key: nick, value: uid
+  late var assignedTo = '';
+  Map memberMap = {
+    'username': 'mum',
+  }; // key: nick, value: uid
 
   final familyID;
 
   _CreateNewTaskPageState({required String this.familyID});
 
-  initState() {
-    getFamilyMembers();
-    super.initState();
-  }
-
-  getFamilyMembers() async {
-    // get members from firebase
-    DatabaseReference membersRef =
-        FirebaseDatabase.instance.ref().child('families/$familyID/members');
-
-    final event = await membersRef.once(DatabaseEventType.value);
-    setState(() {
-      this.memberMap = event.snapshot.value as Map<dynamic, dynamic>;
-      if (this.assignedTo == null) {
-        this.assignedTo = this.memberMap.keys.first;
-      }
-    });
-    print(this.memberMap);
+  Widget DropDownButton(
+      {List<DropdownMenuItem<String>>? items,
+      Null Function(Object? selected)? onChanged,
+      String? value,
+      MaterialColor? iconEnabledColor,
+      MaterialColor? iconDisabledColor,
+      int? iconSize}) {
+    return ChangeNotifierProvider<DB>(
+      create: (ctx) => DB(uid: FirebaseAuth.instance.currentUser!.uid),
+      child: Consumer<DB>(builder: (context, data, _) {
+        return data.dataMembers.isEmpty
+            ? CircularProgressIndicator()
+            : DropDownButton(
+                items: data.dataMembers.keys
+                    .toList()
+                    .map((value) => DropdownMenuItem(
+                          child: Text(value),
+                          value: value,
+                        ))
+                    .toList(),
+                onChanged: (Object? selected) {
+                  print(selected);
+                  setState(() {
+                    this.assignedTo = selected! as String;
+                  });
+                },
+                value:
+                    assignedTo == '' ? assignedTo : data.dataMembers.keys.first,
+                iconEnabledColor: Colors.lightBlue,
+                iconDisabledColor: Colors.lightGreen,
+                iconSize: 40,
+              );
+      }),
+    );
   }
 
   Widget DropDown() {
@@ -60,7 +82,7 @@ class _CreateNewTaskPageState extends State<CreateNewTaskPage> {
       onChanged: (Object? selected) {
         print(selected);
         setState(() {
-          this.assignedTo = selected;
+          this.assignedTo = selected! as String;
         });
       },
       value: assignedTo,
@@ -70,37 +92,8 @@ class _CreateNewTaskPageState extends State<CreateNewTaskPage> {
     );
   }
 
-  // Future<void> createTask() async {
-  //   final DatabaseReference tasks = FirebaseDatabase.instance.ref('tasks');
-  //   var taskref = tasks.push();
-  //   await taskref.set({
-  //     'title': title,
-  //     'description': description,
-  //     'assignedTo': assignedTo,
-  //     'timestamp': timestamp,
-  //     'deadline': deadline,
-  //   }).then((onValue) {
-  //     print('task created');
-  //   }).catchError((onError) {
-  //     print('error1');
-  //   });
-
-  //   print(taskref);
-  //   print(assignedTo);
-
-  //   // add taskID in under the user
-
-  //   var newRef = FirebaseDatabase.instance.ref('users/${assignedTo}/assigned');
-  //   await newRef.push().set(taskref.key).then((onValue) {
-  //     print('task added to user');
-  //   }).catchError((onError) {
-  //     print('error2');
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    getFamilyMembers();
     double width = MediaQuery.of(context).size.width;
     var downwardIcon = Icon(
       Icons.keyboard_arrow_down,
@@ -161,9 +154,9 @@ class _CreateNewTaskPageState extends State<CreateNewTaskPage> {
                           label: 'Deadline',
                           icon: downwardIcon,
                           onchanged: (val) => {
-                            deadline = DateTime(DateTime.now()
-                                        .add(Duration(hours: val.split(':')[0]))
-                                    as int)
+                            deadline = DateTime(DateTime.now().add(Duration(
+                                    hours: val.split(':')[0],
+                                    minutes: val.split(':')[1])) as int)
                                 .microsecondsSinceEpoch
                           },
                         ),
@@ -175,7 +168,7 @@ class _CreateNewTaskPageState extends State<CreateNewTaskPage> {
                     children: [
                       Text('Assign To'),
                       SizedBox(width: 10),
-                      DropDown(),
+                      DropDownButton(),
                     ],
                   ),
                   SizedBox(height: 20),

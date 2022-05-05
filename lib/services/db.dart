@@ -13,26 +13,23 @@ import 'package:firebase_database/firebase_database.dart';
 
 class db {
   static final DatabaseReference database = FirebaseDatabase.instance.ref();
+  static User? user = FirebaseAuth.instance.currentUser;
 
   static addUser() {
-    User? user = FirebaseAuth.instance.currentUser;
-
     DatabaseReference familyref = database.child('families').push();
-    database.child('users').child(user!.uid).set({
-      'username': user.displayName,
-      'familyID': familyref.key,
-    });
 
-    familyref.set({
-      'head': user.uid,
-      'members': {
-        user.displayName: user.uid,
-      },
-    });
+    database.child('users/${user!.uid}/username').set(user!.displayName);
+    database.child('users/${user!.uid}/familyID').set(familyref.key);
+    database.child('users/${user!.uid}/photo').set(user!.photoURL);
 
-    DatabaseReference membersRef =
-        database.child('members').child(familyref.key!);
-    membersRef.child(user.displayName!).set(user.photoURL!);
+    familyref.child('head').set(user!.displayName);
+    familyref
+        .child('members')
+        .child(user!.displayName!)
+        .set(user!.photoURL!)
+        .then((_) {
+      print('added user to family');
+    });
   }
 
   // let mum share her familyID with members
@@ -40,34 +37,36 @@ class db {
     User? user = FirebaseAuth.instance.currentUser;
     DatabaseReference familyref = database.child('families/$code/members');
 
-    database.child('users').child(user!.uid).set({
-      'username': user.displayName,
-      'familyID': code,
-    });
+    database.child('users/${user!.uid}/username').set(user.displayName);
+    database.child('users/${user.uid}/familyID').set(code);
+    database.child('users/${user.uid}/photo').set(user.photoURL);
 
-    familyref.child(user.displayName!).set(user.uid);
+    familyref
+        .child(user.displayName!)
+        .set(user.photoURL)
+        .then((_) => print('added user to family'));
   }
 
   static addTask(String title, String description, String assignedTo,
       int timestamp, int deadline) {
-    DatabaseReference tasks = database.child('tasks');
-    var taskref = tasks.push();
-    taskref.set({
-      'title': title,
-      'description': description,
-      'assignedTo': assignedTo,
-      'timestamp': timestamp,
-      'deadline': deadline,
-    }).then((onValue) {
-      print('task created');
-    }).catchError((onError) {
-      print('error1');
-    });
+    DatabaseReference tasksref = database.child('tasks');
+    var taskref = tasksref.push();
+
+    taskref.child('title').set(title);
+    taskref.child('description').set(description);
+    taskref.child('assignedTo').set(assignedTo);
+    taskref.child('timestamp').set(timestamp);
+    taskref.child('deadline').set(deadline);
 
     print(taskref);
     print(assignedTo);
 
     // add taskID in under the user
+    database
+        .child('users/$assignedTo/tasks')
+        .child(taskref.key!)
+        .set(taskref.key)
+        .then((_) => print('added task to user'));
 
     var newRef = FirebaseDatabase.instance.ref('users/${assignedTo}/assigned');
     newRef.push().set(taskref.key).then((onValue) {
