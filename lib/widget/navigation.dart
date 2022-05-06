@@ -55,19 +55,19 @@ class CustomNavigation extends StatelessWidget {
                   color: market,
                   size: 24.0,
                 )),
-            TextButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    '/bookmarks',
-                    (route) => false,
-                  );
-                },
-                child: Icon(
-                  Icons.bookmark,
-                  color: bookmarks,
-                  size: 24.0,
-                )),
+            // TextButton(
+            //     onPressed: () {
+            //       Navigator.pushNamedAndRemoveUntil(
+            //         context,
+            //         '/bookmarks',
+            //         (route) => false,
+            //       );
+            //     },
+            //     child: Icon(
+            //       Icons.bookmark,
+            //       color: bookmarks,
+            //       size: 24.0,
+            //     )),
             TextButton(
                 onPressed: () {
                   Navigator.pushNamedAndRemoveUntil(

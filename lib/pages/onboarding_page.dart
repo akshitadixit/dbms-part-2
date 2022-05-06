@@ -19,7 +19,7 @@ class OnBoardingPage extends StatelessWidget {
           children: [
             Container(
               width: 500,
-              height: 360,
+              height: MediaQuery.of(context).size.height * 0.5,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
@@ -28,7 +28,7 @@ class OnBoardingPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 50),
+            SizedBox(height: 20),
             Text(
               'Mum-Assign',
               style: blackTextStyle.copyWith(

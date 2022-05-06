@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_app/services/db2.dart';
+import 'package:travel_app/services/db_tasks.dart';
 
 class myTasks extends StatelessWidget {
   @override

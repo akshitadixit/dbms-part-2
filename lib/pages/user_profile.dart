@@ -1,50 +1,39 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travel_app/services/auth.dart';
 import 'package:travel_app/theme.dart';
 import 'package:travel_app/widget/navigation.dart';
 
-class UserProfile extends StatefulWidget {
-  var user;
-
-  UserProfile({Key? key, this.user}) : super(key: key);
-
-  @override
-  State<UserProfile> createState() => _UserProfileState(user: user);
-}
-
-class _UserProfileState extends State<UserProfile> {
-  var user;
-
-  _UserProfileState({this.user});
-
-  get kBackgroundColor => null;
-  final AuthService _auth = AuthService();
-
+class UserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final AuthService _auth = AuthService();
+
+    User? user = FirebaseAuth.instance.currentUser;
     Widget ScrollContent() {
       Widget UserLiked() {
         return Container(
           margin: EdgeInsets.only(bottom: 18),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 margin: EdgeInsets.fromLTRB(20, 40, 20, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Account Settings",
-                      style: blackTextStyle.copyWith(
-                        fontSize: 30,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    Icon(
-                      Icons.settings,
+                    Row(
+                      children: [
+                        Text(
+                          "Account Settings",
+                          style: blackTextStyle.copyWith(
+                            fontSize: 30,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
                     ),
                     TextButton(
                         onPressed: () async {
@@ -63,6 +52,20 @@ class _UserProfileState extends State<UserProfile> {
                   ],
                 ),
               ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+              CircleAvatar(
+                backgroundImage: NetworkImage(user!.photoURL.toString()),
+                radius: 50,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                user.displayName.toString().substring(0, 1).toUpperCase() +
+                    user.displayName.toString().substring(1),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline4!
+                    .copyWith(fontWeight: FontWeight.bold),
+              )
             ],
           ),
         );
