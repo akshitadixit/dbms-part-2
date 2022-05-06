@@ -59,33 +59,37 @@ class _LoginPageState extends State<LoginPage> {
           ? Loading()
           : Scaffold(
               backgroundColor: kBackgroundColor,
-              body: SingleChildScrollView(
-                child: Container(
-                  margin: EdgeInsets.only(
-                    left: 23,
-                    right: 23,
-                    top: 27,
-                    bottom: 100,
-                  ),
-                  child: Column(
-                    children: [
-                      header(),
-                      SizedBox(height: 100),
-                      Text(
-                        "Welcome Back!",
-                        style: blackTextStyle.copyWith(
-                          fontSize: 40,
-                          fontWeight: semiBold,
-                        ),
+              body: Container(
+                // margin: EdgeInsets.only(
+                //   left: 23,
+                //   right: 23,
+                //   top: 27,
+                //   bottom: 100,
+                // ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    header(),
+                    SizedBox(height: 20),
+                    Text(
+                      "Welcome Back!",
+                      style: blackTextStyle.copyWith(
+                        fontSize: 40,
+                        fontWeight: semiBold,
                       ),
-                      //SizedBox(height: 200),
-                      Container(
-                        padding: EdgeInsets.only(top: 125, right: 35, left: 35),
-                        child: Column(
-                          children: [
-                            Text(error, style: TextStyle(color: Colors.red)),
-                            SizedBox(height: 20),
-                            TextField(
+                    ),
+                    //SizedBox(height: 200),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Text(error, style: TextStyle(color: Colors.red)),
+                          SizedBox(height: 10),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 38.0),
+                            child: TextField(
                               decoration: InputDecoration(
                                 fillColor: Colors.grey.shade100,
                                 filled: true,
@@ -95,8 +99,12 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               onChanged: (val) => email = val,
                             ),
-                            SizedBox(height: 20),
-                            TextField(
+                          ),
+                          SizedBox(height: 10),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 38.0),
+                            child: TextField(
                               obscureText: true, //to give password effect
                               decoration: InputDecoration(
                                 fillColor: Colors.grey.shade100,
@@ -107,95 +115,96 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               onChanged: (val) => Password = val,
                             ),
-                            SizedBox(
-                              height: 40,
-                            ),
-                            Button(
-                              width: 243,
-                              height: 54,
-                              fontSize: 22,
-                              content: 'Sign in',
-                              onClick: () async {
-                                setState(() {
-                                  loading = true;
-                                });
-                                try {
-                                  dynamic user =
-                                      await _auth.signinwithEmailandpassword(
-                                          email, Password);
-                                  if (user != null) {
-                                    // changes here are to facilitate user id to respective pages/modules
-                                    Home.user = user;
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => HomePage()));
-                                  }
-                                } catch (e) {
-                                  setState(() {
-                                    loading = false;
-                                    error = "Incorrect Email or Password";
-                                  });
-                                }
-                              },
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  child: Text(
-                                    "Sign up",
-                                    style: blackTextStyle.copyWith(
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  onTap: () {
-                                    Navigator.pushNamedAndRemoveUntil(
+                          ),
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Button(
+                            width: 243,
+                            height: 54,
+                            fontSize: 22,
+                            content: 'Sign in',
+                            onClick: () async {
+                              setState(() {
+                                loading = true;
+                              });
+                              try {
+                                dynamic user =
+                                    await _auth.signinwithEmailandpassword(
+                                        email, Password);
+                                if (user != null) {
+                                  // changes here are to facilitate user id to respective pages/modules
+                                  Home.user = user;
+                                  Navigator.push(
                                       context,
-                                      '/signup',
-                                      (route) => false,
-                                    );
-                                  },
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(
-                                  "|",
+                                      MaterialPageRoute(
+                                          builder: (context) => HomePage()));
+                                }
+                              } catch (e) {
+                                setState(() {
+                                  loading = false;
+                                  error = "Incorrect Email or Password";
+                                });
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                child: Text(
+                                  "Sign up",
                                   style: blackTextStyle.copyWith(
+                                    decoration: TextDecoration.underline,
                                     fontSize: 20,
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 10,
+                                onTap: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/signup',
+                                    (route) => false,
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                "|",
+                                style: blackTextStyle.copyWith(
+                                  fontSize: 20,
                                 ),
-                                GestureDetector(
-                                  child: Text(
-                                    "Forgot password",
-                                    style: blackTextStyle.copyWith(
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 20,
-                                    ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              GestureDetector(
+                                child: Text(
+                                  "Forgot password",
+                                  style: blackTextStyle.copyWith(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 20,
                                   ),
-                                  onTap: () {
-                                    Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      '/',
-                                      (route) => false,
-                                    );
-                                  },
                                 ),
-                              ],
-                            )
-                          ],
-                        ),
+                                onTap: () {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    '/',
+                                    (route) => false,
+                                  );
+                                },
+                              ),
+                            ],
+                          )
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20)
+                  ],
                 ),
               ),
             ),

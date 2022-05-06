@@ -6,10 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_app/services/db.dart';
+import 'package:travel_app/services/db_tasks.dart';
 import 'package:travel_app/theme.dart';
 import 'package:travel_app/widget/navigation.dart';
 
-import '../services/db2.dart';
 
 class MarketPage extends StatelessWidget {
   const MarketPage({Key? key}) : super(key: key);

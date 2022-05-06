@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_app/pages/home_page.dart';
@@ -10,10 +11,11 @@ import 'package:travel_app/pages/user_profile.dart';
 import 'package:travel_app/services/auth.dart';
 import 'package:travel_app/pages/bookmarks_page.dart';
 import 'package:travel_app/pages/signup_page.dart';
+import 'package:travel_app/services/db_tasks.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
+  if (kIsWeb) {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
           apiKey: "AIzaSyBVab5VmfFVIgISPhF2mw6--d1NFM7gpqw",
@@ -23,11 +25,9 @@ void main() async {
           databaseURL:
               "https://mum-assign-default-rtdb.asia-southeast1.firebasedatabase.app"),
     );
-  } catch (e) {
-    print(e);
+  } else {
+    ///
   }
-
-  print('Firebase initialized!');
 
   runApp(
     MultiProvider(
@@ -46,7 +46,6 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     user = Provider.of<AuthUser?>(context);
-    // print(user);
     if (user != null)
       return HomePage();
     else
@@ -68,8 +67,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/boarding': (context) => OnBoardingPage(),
           '/home': (context) => HomePage(),
-          '/user': (context) =>
-              UserProfile(user: FirebaseAuth.instance.currentUser!.uid),
+          '/user': (context) => UserProfile(),
           '/bookmarks': (context) => BookmarksPage(),
           '/login': (context) => LoginPage(),
           '/signup': (context) => SignupPage(),
